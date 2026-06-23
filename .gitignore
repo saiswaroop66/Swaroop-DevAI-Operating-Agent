@@ -1,0 +1,10 @@
+.env
+memory.json
+generated_image.png
+
+__pycache__/
+*.pyc
+
+.streamlit/
+
+.vscode/
