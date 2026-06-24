@@ -1,39 +1,43 @@
-from utils.llm import ask_llm
-import json
-
+import re
 
 def extract_memory(user_message):
 
-    prompt = f"""
-    Extract personal facts from this message.
+    facts = {}
 
-    Return ONLY JSON.
+    text = user_message.lower()
 
-    Example:
+    # Name
 
-    {{
-        "name":"Swaroop",
-        "favorite_language":"Python",
-        "career_goal":"AI Engineer"
-    }}
+    match = re.search(
+        r"my name is\s+(.+)",
+        text
+    )
 
-    Message:
-    {user_message}
+    if match:
+        facts["name"] = match.group(1).strip().title()
 
-    If no facts exist return:
-    {{}}
-    """
+    # Favorite Language
 
-    try:
+    match = re.search(
+        r"my favorite language is\s+(.+)",
+        text
+    )
 
-        response = ask_llm(prompt)
+    if match:
+        facts["favorite_language"] = (
+            match.group(1).strip().title()
+        )
 
-        start = response.find("{")
-        end = response.rfind("}") + 1
+    # Career Goal
 
-        json_text = response[start:end]
+    match = re.search(
+        r"my career goal is\s+(.+)",
+        text
+    )
 
-        return json.loads(json_text)
+    if match:
+        facts["career_goal"] = (
+            match.group(1).strip().title()
+        )
 
-    except:
-        return {}
+    return facts
